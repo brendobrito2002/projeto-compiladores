@@ -1,0 +1,37 @@
+programa exemplo;
+{
+    var x: inteiro;
+    var y: booleano;
+
+    funcao soma(a: inteiro, b: inteiro): inteiro {
+        retorno a + b;
+    }
+
+    funcao imprimeMensagem(): booleano {
+        print(1);
+        retorno true;
+    }
+
+    x = soma(10, 20);
+    y = imprimeMensagem();
+
+    se (x > 10) {
+        print(x);
+    } senao {
+        print(0);
+    }
+
+    enquanto (x < 100) {
+        x = x + 10;
+        se (x == 50) {
+            continue;
+        }
+        se (x > 80) {
+            break;
+        }
+        print(x);
+    }
+
+    retorno x;
+}
+.
