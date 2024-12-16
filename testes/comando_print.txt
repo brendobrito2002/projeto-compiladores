@@ -1,0 +1,7 @@
+programa Impressao;
+{
+    var x : inteiro;
+    x = 42;
+    print(x);
+}
+.

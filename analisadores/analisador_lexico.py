@@ -1,6 +1,6 @@
 import re
 from tokens.token_model import Token 
-from tokens.padrao_tokens import REGEX_TOKENS  
+from tokens.token_regex import REGEX_TOKENS  
 
 class AnalisadorLexico:
     def __init__(self, codigo):

@@ -1,0 +1,6 @@
+programa DeclaracaoVariavel;
+{
+    var x : inteiro;
+    x = 10;
+}
+.
