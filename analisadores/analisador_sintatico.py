@@ -100,7 +100,7 @@ class AnalisadorSintatico:
     
     def comandos(self):
         """<comandos> ::= <comando> (";" <comando>)*"""
-        while self.token_atual and self.token_atual.tipo in ["IDENTIFICADOR", "PALAVRA_CHAVE"]:
+        while self.token_atual and self.token_atual.tipo in ["IDENTIFICADOR", "PALAVRA_CHAVE", "CONDICIONAL"]:
             self.comando()
 
     
@@ -172,6 +172,8 @@ class AnalisadorSintatico:
     
     def chamada_funcao(self):
         """<chamada_funcao> ::= <identificador> "(" <argumentos_opcionais> ")"""
+        self.validar("IDENTIFICADOR")
+        self.validar("OPERADOR_ARITMETICO", "=")
         self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", "(")
         self.argumentos_opicionais()
