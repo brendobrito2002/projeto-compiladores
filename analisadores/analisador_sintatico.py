@@ -108,7 +108,6 @@ class AnalisadorSintatico:
         """<comando> ::= <atribuicao> | <chamada_funcao> | <se> | <enquanto> | <comando_retorno> | <comando_desvio> | <comando_impressao>"""
         if self.token_atual.tipo == "IDENTIFICADOR" and self.tokens[self.posicao + 1].valor == "=" and self.tokens[self.posicao + 3].valor != "(":
             self.atribuicao()
-            self.validar("DELIMITADOR", ";")
         elif self.token_atual.tipo == "IDENTIFICADOR" and self.tokens[self.posicao + 3].valor == "(":
             self.chamada_funcao()
         elif self.token_atual.tipo == "CONDICIONAL" and self.token_atual.valor == "se":
@@ -127,10 +126,11 @@ class AnalisadorSintatico:
             self.erro("Comando inválido.")
     
     def atribuicao(self):
-        """<atribuicao> ::= <identificador> "=" <expressao>"""
+        """<atribuicao> ::= <identificador> "=" <expressao> ;"""
         self.validar("IDENTIFICADOR")
         self.validar("OPERADOR_ARITMETICO")
         self.expressao()
+        self.validar("DELIMITADOR", ";")
 
     def expressao(self):
         """<expressao> ::= <termo> <expressao_rec>"""
@@ -172,13 +172,15 @@ class AnalisadorSintatico:
             self.expressao_rec()
     
     def chamada_funcao(self):
-        """<chamada_funcao> ::= <identificador> "(" <argumentos_opcionais> ")"""
+        """<chamada_funcao> ::= <identificador> "(" <argumentos_opcionais> ")"""     
         self.validar("IDENTIFICADOR")
         self.validar("OPERADOR_ARITMETICO", "=")
         self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", "(")
-        self.argumentos_opicionais()
+        if not (self.token_atual.tipo == "DELIMITADOR" and self.token_atual.valor == ")"):
+            self.argumentos()
         self.validar("DELIMITADOR", ")")
+        self.validar("DELIMITADOR", ";")
 
     def argumentos_opicionais(self):
         """<argumentos_opcionais> ::= <argumentos> | """
