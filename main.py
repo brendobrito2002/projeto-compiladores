@@ -2,7 +2,7 @@ from analisadores.analisador_lexico import AnalisadorLexico
 from analisadores.analisador_sintatico import AnalisadorSintatico
 
 def main():
-    with open("testes/enquanto.txt", "r") as f:
+    with open("testes/final.txt", "r") as f:
         codigo_fonte = f.read()
 
     print("\nExecutando Analisador Léxico...")

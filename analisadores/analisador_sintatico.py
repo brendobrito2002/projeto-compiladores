@@ -117,8 +117,9 @@ class AnalisadorSintatico:
             self.enquanto()
         elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "retorno":
             self.retorno()
-            
-        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor in ["break", "continue"]:
+        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "break":
+            self.desvio()
+        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "continue":
             self.desvio()
         elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "print":
             self.imprimir()
@@ -239,8 +240,12 @@ class AnalisadorSintatico:
 
     def desvio(self):
         """<comando_desvio> ::= "break" | "continue"""
-        if self.token_atual.valor == "break" or self.token_atual.valor == "continue":
+        if self.token_atual.valor == "continue":
             self.avancar()
+            self.validar("DELIMITADOR", ";")
+        elif self.token_atual.valor == "break":
+            self.avancar()
+            self.validar("DELIMITADOR", ";")
 
     def imprimir(self):
         """<comando_impressao> ::= "print" "(" <expressao> ")" """

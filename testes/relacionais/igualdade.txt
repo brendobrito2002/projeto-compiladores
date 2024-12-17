@@ -1,0 +1,9 @@
+programa Igualdade;
+{
+    var resultado: booleano;
+    resultado = 5;
+    se(resultado == 5){
+        print(true);
+    }
+}
+.

@@ -1,0 +1,13 @@
+programa Break;
+{
+    var i: inteiro;
+    i = 0;
+    enquanto (i < 10) {
+        se (i == 5) {
+            break;
+        }
+        i = i + 1;
+    }
+    print(i);
+}
+.

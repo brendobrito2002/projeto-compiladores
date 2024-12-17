@@ -1,0 +1,13 @@
+programa MenorQueOuIgual;
+{
+    var resultado: booleano;
+    resultado = 5;
+    se(resultado < 5){
+        print(true);
+    } 
+    
+    se(resultado <= 6) {
+        print(false);
+    }
+}
+.
