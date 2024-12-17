@@ -1,0 +1,12 @@
+programa Retorno;
+{
+    funcao dobro(x: inteiro): inteiro {
+        retorno x * 2;
+    }
+
+    var resultado: inteiro;
+
+    resultado = dobro(5);
+    print(resultado);
+}
+.

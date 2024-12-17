@@ -1,0 +1,7 @@
+programa Adicao;
+{
+    var resultado : inteiro;
+    resultado = 5 + 3;
+    print(resultado);
+}
+.

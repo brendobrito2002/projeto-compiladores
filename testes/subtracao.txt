@@ -1,0 +1,7 @@
+programa Subtracao;
+{
+    var resultado: inteiro;
+    resultado = 10 - 4;
+    print(resultado);
+}
+.

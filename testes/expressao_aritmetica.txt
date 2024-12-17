@@ -1,0 +1,7 @@
+programa ExpressaoGigante;
+{
+    var resultado: inteiro;
+    resultado = 2 + 3 * (5 - 2) + 6 / 2;
+    print(resultado);
+}
+.

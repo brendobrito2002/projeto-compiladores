@@ -1,0 +1,14 @@
+programa Enquanto;
+{
+    var contador: inteiro;
+
+    contador = 5;
+
+    enquanto (contador > 0) {
+        print(contador);
+        contador = contador - 1;
+    }
+
+    print(0);
+}
+.

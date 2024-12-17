@@ -1,0 +1,9 @@
+programa Condicional;
+{
+    var x : inteiro;
+    x = 10;
+    se(x > 5){
+        retorno true;
+    }
+}
+.

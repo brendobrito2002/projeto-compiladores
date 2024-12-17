@@ -1,0 +1,6 @@
+programa DeclaracaoBoolean;
+{
+    var x : booleano;
+    x = true;
+}
+.

@@ -1,0 +1,18 @@
+programa Senao;
+
+{
+    var x: inteiro;
+    var y: inteiro;
+
+    x = 10;
+
+    se (x > 5) {
+        y = 20;
+    } senao {
+        x = 30; 
+    }
+
+    print(x);
+    print(y);
+}
+.

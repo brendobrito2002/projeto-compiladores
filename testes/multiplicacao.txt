@@ -1,0 +1,7 @@
+programa Multiplicacao;
+{
+    var resultado: inteiro;
+    resultado = 6 * 7;
+    print(resultado);
+}
+.
