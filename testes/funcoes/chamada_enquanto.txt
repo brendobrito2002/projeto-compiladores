@@ -1,0 +1,22 @@
+programa ChamadaFuncaoComEnquanto;
+{
+    funcao fatorial(n: inteiro): inteiro {
+        var resultado: inteiro;
+        resultado = 1;
+
+        enquanto (n > 1) {
+            resultado = resultado * n;
+            n = n - 1;
+        }
+
+        retorno resultado;
+    }
+
+    var numero: inteiro;
+    var fat: inteiro;
+
+    numero = 5;
+    fat = fatorial(numero);
+    print(fat);
+}
+.

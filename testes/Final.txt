@@ -1,37 +1,111 @@
-programa exemplo;
+programa Final;
 {
     var x: inteiro;
     var y: booleano;
+    var z: inteiro;
 
-    funcao soma(a: inteiro, b: inteiro): inteiro {
-        retorno a + b;
+    funcao calcula(a: inteiro, b: inteiro): inteiro {
+        funcao soma(c: inteiro, d: inteiro): inteiro {
+            retorno c + d;
+        }
+
+        funcao multiplica(e: inteiro, f: inteiro): inteiro {
+            retorno e * f;
+        }
+
+        se (a > b) {
+            retorno soma(a, b);
+        } senao {
+            retorno multiplica(a, b);
+        }
     }
 
-    funcao imprimeMensagem(): booleano {
-        print(1);
-        retorno true;
+    funcao analisaValor(valor: inteiro): booleano {
+        funcao maiorQueCinco(v: inteiro): booleano {
+            retorno v > 5;
+        }
+
+        se (maiorQueCinco(valor)) {
+            retorno true;
+        } senao {
+            retorno false;
+        }
     }
 
-    x = soma(10, 20);
-    y = imprimeMensagem();
+    funcao calculaFatorialComLimite(n: inteiro, limite: inteiro): inteiro {
+        var resultado: inteiro;
+        resultado = 1;
 
-    se (x > 10) {
+        enquanto (n > 1) {
+            funcao atingiuLimite(valorAtual: inteiro): booleano {
+                retorno valorAtual > limite;
+            }
+
+            se (atingiuLimite(resultado)) {
+                print(resultado);
+                break;
+            }
+
+            resultado = resultado * n;
+            n = n - 1;
+        }
+
+        retorno resultado;
+    }
+
+    funcao processaValores(a: inteiro, b: inteiro): inteiro {
+        var resultado: inteiro;
+
+        se (a > b) {
+            resultado = calcula(a, b);
+        } senao {
+            resultado = calcula(b, a);
+        }
+
+        enquanto (resultado < 50) {
+            resultado = resultado + 5;
+
+            se (resultado == 30) {
+                print(resultado);
+                continue;
+            }
+
+            se (resultado > 40) {
+                break;
+            }
+
+            print(resultado);
+        }
+
+        retorno resultado;
+    }
+
+    x = calcula(8, 3);
+    y = analisaValor(x);
+    z = calculaFatorialComLimite(5, 60);
+
+    se (y) {
         print(x);
+        print(z);
     } senao {
         print(0);
     }
 
-    enquanto (x < 100) {
-        x = x + 10;
-        se (x == 50) {
-            continue;
+    z = processaValores(x, z);
+
+    enquanto (z < 100) {
+        funcao incrementa(v: inteiro): inteiro {
+            retorno v + 7;
         }
-        se (x > 80) {
+
+        z = incrementa(z);
+        print(z);
+
+        se (z > 90) {
             break;
         }
-        print(x);
     }
 
-    retorno x;
+    retorno x + z;
 }
 .
