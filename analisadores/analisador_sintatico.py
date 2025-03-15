@@ -1,43 +1,30 @@
 class AnalisadorSintatico:
-    # Inicializa o analisador sintático:
-    # self.tokens: Lista de tokens recebida do analisador léxico.
-    # self.posicao: Índice atual na lista de tokens (inicia em 0).
-    # self.token_atual: Token sendo analisado no momento (o primeiro token da lista, ou None se a lista estiver vazia).
     def __init__(self, tokens):
         self.tokens = tokens
         self.posicao = 0
         self.token_atual = self.tokens[self.posicao] if self.tokens else None
 
-    # Avança para o próximo token na lista.
-    # Incrementa o índice self.posicao.
-    # Atualiza self.token_atual para o próximo token se ainda houver tokens disponíveis.
-    # Caso contrário, define self.token_atual como None (indicando o fim da lista).
     def avancar(self):
+        """Avança para o próximo token."""
         self.posicao += 1
         if self.posicao < len(self.tokens):
             self.token_atual = self.tokens[self.posicao]
         else:
             self.token_atual = None
 
-    # Lança um erro sintático, informando:
     def erro(self, mensagem):
+        """Levanta erro sintático."""
         raise SyntaxError(f"Erro sintático na linha {self.token_atual.linha}: {mensagem} (Token: {self.token_atual.valor})")
 
-    # Valida se o token atual possui o tipo e valor esperados.
     def validar(self, tipo_esperado, valor_esperado=None):
-        # Verifica se existe um token atual.
+        """Verifica se o token atual é do tipo e valor esperados e avança."""
         if self.token_atual:
-            # Verifica se o tipo e o valor (se fornecido) correspondem ao esperado.
             if self.token_atual.tipo == tipo_esperado and (valor_esperado is None or self.token_atual.valor == valor_esperado):
-                # Se o token é válido, avança para o próximo.
                 self.avancar()
             else:
-                # Lança erro caso o token não corresponda ao esperado.
                 self.erro(f"Token esperado: {valor_esperado} (Tipo: {tipo_esperado}), encontrado: {self.token_atual.valor} (Tipo: {self.token_atual.tipo})")
         else:
-            # Lança erro caso não existam mais tokens para validar.
             self.erro("Fim do arquivo inesperado.")
-
 
     def programa(self):
         """<programa> ::= 'programa' <bloco> ."""
