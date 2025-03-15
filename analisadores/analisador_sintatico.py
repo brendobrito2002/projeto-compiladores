@@ -144,7 +144,7 @@ class AnalisadorSintatico:
     def atribuicao(self):
         """<atribuicao> ::= <identificador> "=" <expressao> ;"""
         self.validar("IDENTIFICADOR")
-        self.validar("OPERADOR_ARITMETICO", "=")
+        self.validar("OPERADOR_ARITMETICO")
         self.expressao()
         self.validar("DELIMITADOR", ";")
 
@@ -187,7 +187,6 @@ class AnalisadorSintatico:
             self.termo()
             self.expressao_rec()
     
-    # FALTA ADICIONAR O RETORNO OBRIGATORIO PARA A FUNÇÃO
     def chamada_funcao(self):
         """<chamada_funcao> ::= <identificador> "(" <argumentos_opcionais> ")"""     
         self.validar("IDENTIFICADOR")
@@ -196,7 +195,6 @@ class AnalisadorSintatico:
             self.argumentos()
         self.validar("DELIMITADOR", ")")
 
-    # FALTA ADICIONAR O PROCEDIMENTO(FUNÇÃO SEM RETORNO)
 
     def argumentos_opicionais(self):
         """<argumentos_opcionais> ::= <argumentos> | """

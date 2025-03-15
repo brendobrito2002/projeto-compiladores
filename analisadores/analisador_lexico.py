@@ -1,8 +1,6 @@
 import re
-import json
-import os
-from tokens.token_model import Token
-from tokens.token_regex import REGEX_TOKENS
+from tokens.token_model import Token 
+from tokens.token_regex import REGEX_TOKENS  
 
 # O arquivo implementa a classe AnalisadorLexico, que realiza a análise léxica (tokenização) do código-fonte.
 class AnalisadorLexico:
@@ -58,23 +56,3 @@ class AnalisadorLexico:
         
         # Após processar o código-fonte, a lista self.tokens contém todos os tokens identificados.
         return self.tokens
-
-    def salvar_tokens_em_arquivo(self, nome_arquivo="tokens.txt"):
-        """Salva a lista de tokens em um arquivo de texto."""
-        caminho_diretorio = "./analisadores/arquivos_gerados"
-        os.makedirs(caminho_diretorio, exist_ok=True)
-        caminho_arquivo = os.path.join(caminho_diretorio, nome_arquivo)
-        with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
-            for token in self.tokens:
-                arquivo.write(f"{token}\n")
-        print(f"Lista de Tokens salvos em {caminho_arquivo}")
-
-    def salvar_tokens_json(self, nome_arquivo="tokens.json"):
-        """Salva a lista de tokens em um arquivo JSON."""
-        caminho_diretorio = "./analisadores/arquivos_gerados"
-        os.makedirs(caminho_diretorio, exist_ok=True)
-        caminho_arquivo = os.path.join(caminho_diretorio, nome_arquivo)
-        tokens_dict = [{"tipo": token.tipo, "valor": token.valor, "linha": token.linha} for token in self.tokens]
-        with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
-            json.dump(tokens_dict, arquivo, indent=4)
-        print(f"Lista de Tokens salvos em {caminho_arquivo}")
