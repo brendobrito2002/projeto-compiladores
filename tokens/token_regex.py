@@ -1,6 +1,6 @@
 REGEX_TOKENS = [ 
     ("TIPO", r'\b(inteiro|booleano)\b'),
-    ("PALAVRA_CHAVE", r'\b(programa|var|funcao|print|retorno|break|continue)\b'),
+    ("PALAVRA_CHAVE", r'\b(programa|var|funcao|procedimento|print|retorno|break|continue)\b'),
     ("CONDICIONAL", r'\b(se|senao|enquanto)\b'),
     ("BOOLEANO", r'\b(true|false)\b'),
     ("IDENTIFICADOR", r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
