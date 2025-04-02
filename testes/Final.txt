@@ -5,27 +5,15 @@ programa Final;
     var z: inteiro;
 
     funcao calcula(a: inteiro, b: inteiro): inteiro {
-        funcao soma(c: inteiro, d: inteiro): inteiro {
-            retorno c + d;
-        }
-
-        funcao multiplica(e: inteiro, f: inteiro): inteiro {
-            retorno e * f;
-        }
-
         se (a > b) {
-            retorno soma(a, b);
+            retorno a + b;
         } senao {
-            retorno multiplica(a, b);
+            retorno a * b;
         }
     }
 
     funcao analisaValor(valor: inteiro): booleano {
-        funcao maiorQueCinco(v: inteiro): booleano {
-            retorno v > 5;
-        }
-
-        se (maiorQueCinco(valor)) {
+        se (valor > 5) {
             retorno true;
         } senao {
             retorno false;
@@ -37,11 +25,7 @@ programa Final;
         resultado = 1;
 
         enquanto (n > 1) {
-            funcao atingiuLimite(valorAtual: inteiro): booleano {
-                retorno valorAtual > limite;
-            }
-
-            se (atingiuLimite(resultado)) {
+            se (resultado > limite) {
                 print(resultado);
                 break;
             }
@@ -94,18 +78,12 @@ programa Final;
     z = processaValores(x, z);
 
     enquanto (z < 100) {
-        funcao incrementa(v: inteiro): inteiro {
-            retorno v + 7;
-        }
-
-        z = incrementa(z);
+        z = z + 7;
         print(z);
 
         se (z > 90) {
             break;
         }
     }
-
-    retorno x + z;
 }
 .

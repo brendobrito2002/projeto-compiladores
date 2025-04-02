@@ -1,5 +1,4 @@
 import re
-import json
 import os
 from tokens.token_model import Token
 from tokens.token_regex import REGEX_TOKENS
@@ -31,6 +30,7 @@ class AnalisadorLexico:
 
             if not token_encontrado:
                 raise ValueError(f"Erro léxico: Caractere inválido '{self.codigo[i]}' na linha {self.linha_atual}")
+        print("Análise Léxica concluída com sucesso!")
         return self.tokens
 
     def salvar_tokens_em_arquivo(self, nome_arquivo="tokens.txt"):
@@ -41,14 +41,4 @@ class AnalisadorLexico:
         with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
             for token in self.tokens:
                 arquivo.write(f"{token}\n")
-        print(f"Lista de Tokens salvos em {caminho_arquivo}")
-
-    def salvar_tokens_json(self, nome_arquivo="tokens.json"):
-        """Salva a lista de tokens em um arquivo JSON."""
-        caminho_diretorio = "./analisadores/arquivos_gerados"
-        os.makedirs(caminho_diretorio, exist_ok=True)
-        caminho_arquivo = os.path.join(caminho_diretorio, nome_arquivo)
-        tokens_dict = [{"tipo": token.tipo, "valor": token.valor, "linha": token.linha} for token in self.tokens]
-        with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
-            json.dump(tokens_dict, arquivo, indent=4)
         print(f"Lista de Tokens salvos em {caminho_arquivo}")

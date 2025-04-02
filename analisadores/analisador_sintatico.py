@@ -3,6 +3,8 @@ class AnalisadorSintatico:
         self.tokens = tokens
         self.posicao = 0
         self.token_atual = self.tokens[self.posicao] if self.tokens else None
+        self.funcao_exige_retorno = False
+        self.retorno_presente = False
 
     def avancar(self):
         """Avança para o próximo token."""
@@ -63,15 +65,25 @@ class AnalisadorSintatico:
         self.validar("TIPO")
 
     def declaracao_funcao(self):
-        """<declaracao_funcao> ::= "funcao" <identificador> "(" <parametros_opcionais> ")" ":" <tipo> <bloco>"""
+        """<declaracao_funcao> ::= "funcao" <identificador> "(" <parametros_opcionais> ")" [ ":" <tipo> ] <bloco>"""
         self.validar("PALAVRA_CHAVE", "funcao")
         self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", "(")
         self.parametros_opcionais()
         self.validar("DELIMITADOR", ")")
-        self.validar("DELIMITADOR", ":")
-        self.tipo()
+        
+        self.funcao_exige_retorno = False
+        if self.token_atual and self.token_atual.valor == ":":
+            self.validar("DELIMITADOR", ":")
+            self.tipo()
+            self.funcao_exige_retorno = True 
+        
+        self.retorno_presente = False
         self.bloco()
+        
+        if self.funcao_exige_retorno and not self.retorno_presente:
+            self.erro("Função declarada com tipo de retorno deve ter pelo menos um 'retorno'")
+
 
     def parametros_opcionais(self):
         """<parametros_opcionais> ::= <parametros> | """
@@ -106,27 +118,31 @@ class AnalisadorSintatico:
     
     def comando(self):
         """<comando> ::= <atribuicao> | <chamada_funcao> | <se> | <enquanto> | <comando_retorno> | <comando_desvio> | <comando_impressao>"""
-        if self.token_atual.tipo == "IDENTIFICADOR" and self.tokens[self.posicao + 1].valor == "=" and self.tokens[self.posicao + 3].valor != "(":
-            self.atribuicao()
-        elif self.token_atual.tipo == "IDENTIFICADOR" and self.tokens[self.posicao + 3].valor == "(":
-            self.validar("IDENTIFICADOR")
-            self.validar("OPERADOR_ARITMETICO", "=")
-            self.chamada_funcao()
-            self.validar("DELIMITADOR", ";")
-        elif self.token_atual.tipo == "CONDICIONAL" and self.token_atual.valor == "se":
+        if self.token_atual.tipo == "IDENTIFICADOR":
+            # Lookahead para diferenciar atribuição vs chamada
+            if self.tokens[self.posicao + 1].valor == "(":
+                self.chamada_funcao()
+                self.validar("DELIMITADOR", ";")
+            else:
+                self.atribuicao()
+        
+        elif self.token_atual.valor == "se":
             self.se()
-        elif self.token_atual.tipo == "CONDICIONAL" and self.token_atual.valor == "enquanto":
+        
+        elif self.token_atual.valor == "enquanto":
             self.enquanto()
-        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "retorno":
+        
+        elif self.token_atual.valor == "retorno":
             self.retorno()
-        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "break":
+        
+        elif self.token_atual.valor in ("break", "continue"):
             self.desvio()
-        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "continue":
-            self.desvio()
-        elif self.token_atual.tipo == "PALAVRA_CHAVE" and self.token_atual.valor == "print":
+        
+        elif self.token_atual.valor == "print":
             self.imprimir()
+        
         else:
-            self.erro("Comando inválido.")
+            self.erro("Comando inválido")
     
     def atribuicao(self):
         """<atribuicao> ::= <identificador> "=" <expressao> ;"""
@@ -146,19 +162,25 @@ class AnalisadorSintatico:
         self.termo_rec()
 
     def fator(self):
-        """<fator> ::= <identificador> | <numero> | "(" <expressao> ")" | <valor_booleano>"""
+        """<fator> ::= <identificador> [ "(" <argumentos_opcionais> ")" ] | <numero> | "(" <expressao> ")" | <valor_booleano>"""
         if self.token_atual.tipo == "IDENTIFICADOR":
             self.avancar()
+            if self.token_atual and self.token_atual.valor == "(":
+                self.chamada_funcao()
+        
         elif self.token_atual.tipo == "NUMERO":
             self.avancar()
+        
         elif self.token_atual.tipo == "BOOLEANO":
             self.avancar()
-        elif self.token_atual.tipo == "DELIMITADOR" and self.token_atual.valor == "(":
+        
+        elif self.token_atual.valor == "(":
             self.avancar()
             self.expressao()
             self.validar("DELIMITADOR", ")")
+        
         else:
-            raise SyntaxError(f"Erro sintático: Esperado fator, encontrado {self.token_atual.tipo} na linha {self.token_atual.linha}")
+            self.erro("Fator inválido")
 
     def termo_rec(self):
         """<termo_rec> ::= ("*" | "/") <fator> <termo_rec> | """
@@ -174,20 +196,20 @@ class AnalisadorSintatico:
             self.termo()
             self.expressao_rec()
     
-    # FALTA ADICIONAR O RETORNO OBRIGATORIO PARA A FUNÇÃO
     def chamada_funcao(self):
         """<chamada_funcao> ::= <identificador> "(" <argumentos_opcionais> ")"""     
-        self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", "(")
-        if not (self.token_atual.tipo == "DELIMITADOR" and self.token_atual.valor == ")"):
-            self.argumentos()
+        self.argumentos_opcionais()  # Alterado para usar argumentos_opcionais
         self.validar("DELIMITADOR", ")")
 
     # FALTA ADICIONAR O PROCEDIMENTO(FUNÇÃO SEM RETORNO)
 
-    def argumentos_opicionais(self):
+    def argumentos_opcionais(self):
         """<argumentos_opcionais> ::= <argumentos> | """
-        if self.token_atual and self.token_atual.tipo == "IDENTIFICADOR":
+        # Verifica se há pelo menos um token que pode iniciar uma expressão
+        if self.token_atual and self.token_atual.tipo in ["IDENTIFICADOR", "NUMERO", "DELIMITADOR", "BOOLEANO"]:
+            if self.token_atual.tipo == "DELIMITADOR" and self.token_atual.valor != "(":
+                return
             self.argumentos()
     
     def argumentos(self):
@@ -204,7 +226,7 @@ class AnalisadorSintatico:
         self.expressao_booleana()
         self.validar("DELIMITADOR", ")")
         self.bloco()
-        self.senao_opicional()
+        self.senao_opcional()
 
     def expressao_booleana(self):
         """<expressao_booleana> ::= <expressao> <operador_relacional> <expressao> | <booleano>."""
@@ -219,7 +241,7 @@ class AnalisadorSintatico:
         if self.token_atual and self.token_atual.valor == "(":
             self.argumentos()
 
-    def senao_opicional(self):
+    def senao_opcional(self):
         """<senao_opcional> ::= "senao" <bloco> | """
         if self.token_atual and self.token_atual.tipo == "CONDICIONAL" and self.token_atual.valor == "senao":
             self.avancar()
@@ -234,19 +256,14 @@ class AnalisadorSintatico:
         self.bloco()
 
     def retorno(self):
-        """<comando_retorno> ::= "retorno" <expressao_opcional>"""
+        """<comando_retorno> ::= "retorno" <expressao_opcional> ;"""
         self.validar("PALAVRA_CHAVE", "retorno")
-        if self.tokens[self.posicao + 1].valor == "(":
-            self.chamada_funcao()
-            self.validar("DELIMITADOR", ";")
-        elif self.tokens[self.posicao + 1].tipo == "OPERADOR_RELACIONAL":
-            self.expressao_booleana()
-            self.validar("DELIMITADOR", ";")
-        else:
-            self.expressao_opicional()
-            self.validar("DELIMITADOR", ";")
+        self.expressao_opcional()
+        self.validar("DELIMITADOR", ";")
+        self.retorno_presente = True
 
-    def expressao_opicional(self):
+
+    def expressao_opcional(self):
         """<expressao_opcional> ::= <expressao> | """
         if self.token_atual and self.token_atual.tipo in ["IDENTIFICADOR", "NUMERO", "DELIMITADOR", "BOOLEANO"]:
             self.expressao()

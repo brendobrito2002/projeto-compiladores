@@ -1,0 +1,7 @@
+programa FuncaoComRetorno;
+{
+    funcao soma(a: inteiro, b: inteiro): inteiro {
+        retorno a + b;
+    } 
+}
+.
