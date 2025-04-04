@@ -1,0 +1,7 @@
+programa ProcedimentoInvalido;
+{
+    procedimento erro() {
+        retorno 10;
+    }
+}
+.

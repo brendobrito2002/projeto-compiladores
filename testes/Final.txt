@@ -68,7 +68,7 @@ programa Final;
     y = analisaValor(x);
     z = calculaFatorialComLimite(5, 60);
 
-    se (y) {
+    se (y == true) {
         print(x);
         print(z);
     } senao {

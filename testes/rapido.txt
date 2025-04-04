@@ -1,0 +1,7 @@
+programa TesteRapido;
+{
+    funcao soma(a: inteiro): inteiro {
+        retorno a + 1;
+    }
+}
+.

@@ -1,0 +1,7 @@
+programa ProcedimentoValido;
+{
+    procedimento log(mensagem: inteiro) {
+        print(mensagem);
+    }
+}
+.
