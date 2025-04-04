@@ -1,7 +1,8 @@
 programa Retorno;
 {
     funcao dobro(x: inteiro): inteiro {
-        retorno x * 2;
+        resultado = x * 2;
+        retorno resultado;
     }
 }
 .
