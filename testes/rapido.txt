@@ -1,7 +1,8 @@
-programa TesteRapido;
+programa Teste;
 {
-    funcao soma(a: inteiro): inteiro {
-        retorno a + 1;
+    funcao teste() {
+        var x: inteiro;
+        x = 10;
     }
 }
 .

@@ -1,3 +1,5 @@
+from analisadores.tabela.tabela_simbolos import TabelaDeSimbolos
+
 class AnalisadorSintatico:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -7,6 +9,7 @@ class AnalisadorSintatico:
         self.retorno_presente = False
         self.em_procedimento = False
         self.retorno_valido_encontrado = False
+        self.tabela_simbolos = TabelaDeSimbolos()
 
     def avancar(self):
         """Avança para o próximo token."""
@@ -31,15 +34,17 @@ class AnalisadorSintatico:
             self.erro("Fim do arquivo inesperado.")
 
     def programa(self):
-        """<programa> ::= 'programa' <bloco> ."""
         self.validar("PALAVRA_CHAVE", "programa")
         self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", ";")
-        self.bloco()
+        self.bloco(is_global=True)
         self.validar("DELIMITADOR", ".")
         print("Análise Sintática concluída com sucesso!")
-
-    def bloco(self):
+        self.tabela_simbolos.gerar_relatorio("analisadores/arquivos_gerados/tabela_simbolos.txt")
+        
+    def bloco(self, is_global=False):
+        if not is_global:
+            self.tabela_simbolos.entrar_escopo()
         self.validar("DELIMITADOR", "{")
         self.declaracoes_opcionais()
         garante_retorno = False
@@ -50,6 +55,8 @@ class AnalisadorSintatico:
             if self.token_atual and self.token_atual.valor == ";":
                 self.avancar()
         self.validar("DELIMITADOR", "}")
+        if not is_global:
+            self.tabela_simbolos.sair_escopo()
         return garante_retorno
     
     def declaracoes_opcionais(self):
@@ -72,41 +79,104 @@ class AnalisadorSintatico:
             self.erro("Declaração inválida")
 
     def declaracao_variavel(self):
-        """<declaracao_variaveis> ::= "var" <identificador> ":" <tipo>"""
         self.validar("PALAVRA_CHAVE", "var")
+        nome = self.token_atual.valor
         self.validar("IDENTIFICADOR")
         self.validar("DELIMITADOR", ":")
+        tipo = self.token_atual.valor
         self.validar("TIPO")
+        
+        self.tabela_simbolos.adicionar(
+            nome=nome,
+            tipo=tipo,
+            categoria='variavel'
+        )
 
     def declaracao_funcao(self):
         self.validar("PALAVRA_CHAVE", "funcao")
+        nome_funcao = self.token_atual.valor
         self.validar("IDENTIFICADOR")
+
         self.validar("DELIMITADOR", "(")
-        self.parametros_opcionais()
+        parametros = []
+        if self.token_atual.valor != ")":
+            self.tabela_simbolos.entrar_escopo()
+            while self.token_atual.valor != ")":
+                param_nome = self.token_atual.valor
+                self.validar("IDENTIFICADOR")
+                self.validar("DELIMITADOR", ":")
+                param_tipo = self.token_atual.valor
+                self.validar("TIPO")
+                
+                self.tabela_simbolos.adicionar(
+                    nome=param_nome,
+                    tipo=param_tipo,
+                    categoria='parametro'
+                )
+                parametros.append({'nome': param_nome, 'tipo': param_tipo})
+                
+                if self.token_atual.valor == ",":
+                    self.avancar()
+            self.tabela_simbolos.sair_escopo()
         self.validar("DELIMITADOR", ")")
-        
-        tem_retorno = False
-        if self.token_atual and self.token_atual.valor == ":":
+
+        tipo_retorno = 'none'
+        if self.token_atual.valor == ":":
             self.avancar()
-            self.tipo()
-            tem_retorno = True
-        
-        garante_retorno = self.bloco()
-        
-        if tem_retorno and not garante_retorno:
-            self.erro("Função deve garantir retorno em todos os caminhos")
+            tipo_retorno = self.token_atual.valor
+            self.validar("TIPO")
+
+        self.tabela_simbolos.adicionar(
+            nome=nome_funcao,
+            tipo=tipo_retorno,
+            categoria='funcao',
+            parametros=parametros
+        )
+
+        self.tabela_simbolos.entrar_escopo()
+        self.bloco()
+        self.tabela_simbolos.sair_escopo()
 
     def declaracao_procedimento(self):
-        """<declaracao_procedimento> ::= "procedimento" <identificador> "(" <parametros_opcionais> ")" <bloco>"""
         self.validar("PALAVRA_CHAVE", "procedimento")
+        nome_procedimento = self.token_atual.valor
         self.validar("IDENTIFICADOR")
+
         self.validar("DELIMITADOR", "(")
-        self.parametros_opcionais()
+        parametros = []
+        if self.token_atual.valor != ")":
+            self.tabela_simbolos.entrar_escopo()
+            while self.token_atual.valor != ")":
+                param_nome = self.token_atual.valor
+                self.validar("IDENTIFICADOR")
+                self.validar("DELIMITADOR", ":")
+                param_tipo = self.token_atual.valor
+                self.validar("TIPO")
+                
+                self.tabela_simbolos.adicionar(
+                    nome=param_nome,
+                    tipo=param_tipo,
+                    categoria='parametro'
+                )
+                parametros.append({'nome': param_nome, 'tipo': param_tipo})
+                
+                if self.token_atual.valor == ",":
+                    self.avancar()
+            self.tabela_simbolos.sair_escopo()
         self.validar("DELIMITADOR", ")")
-        
+
+        self.tabela_simbolos.adicionar(
+            nome=nome_procedimento,
+            tipo='none',
+            categoria='procedimento',
+            parametros=parametros
+        )
+
+        self.tabela_simbolos.entrar_escopo()
         self.em_procedimento = True
         self.bloco()
         self.em_procedimento = False
+        self.tabela_simbolos.sair_escopo()
 
     def parametros_opcionais(self):
         """<parametros_opcionais> ::= <parametros> | """
@@ -241,10 +311,12 @@ class AnalisadorSintatico:
         self.expressao_booleana()
         self.validar("DELIMITADOR", ")")
         retorno_se = self.bloco()
+        
         if self.token_atual and self.token_atual.valor == "senao":
             self.avancar()
-            retorno_senao = self.bloco() 
+            retorno_senao = self.bloco()
             return retorno_se and retorno_senao 
+        
         return False
 
     def expressao_booleana(self):

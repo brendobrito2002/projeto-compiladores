@@ -1,6 +1,7 @@
 programa Retorno;
 {
     funcao dobro(x: inteiro): inteiro {
+        var resultado: inteiro;
         resultado = x * 2;
         retorno resultado;
     }
