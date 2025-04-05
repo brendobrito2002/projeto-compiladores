@@ -1,3 +1,5 @@
+import json
+
 class TabelaDeSimbolos:
     def __init__(self):
         self.escopos_ativos = [{}]
@@ -6,7 +8,7 @@ class TabelaDeSimbolos:
         self._registrar_escopo()
 
     def _registrar_escopo(self):
-        """Registra o escopo atual por referência (sem cópia)"""
+        """Registra o escopo atual por referência"""
         self.todos_escopos.append(self.escopos_ativos[-1])
 
     def entrar_escopo(self):
@@ -46,7 +48,7 @@ class TabelaDeSimbolos:
         """Verifica compatibilidade de tipos para operações"""
         if tipo1 != tipo2:
             raise TypeError(f"Tipos incompatíveis: {tipo1} e {tipo2} na operação {operacao}")
-        
+
     def gerar_relatorio(self, nome_arquivo="tabela_simbolos.txt"):
         with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
             arquivo.write("TABELA DE SÍMBOLOS COMPLETA\n")
@@ -58,7 +60,36 @@ class TabelaDeSimbolos:
                 arquivo.write(f"\n=== Escopo {idx} ===\n")            
                 for nome, info in escopo.items():
                     linha = f"Nome: {nome.ljust(15)} | Tipo: {info['tipo'].ljust(10)} | Categoria: {info['categoria'].ljust(10)}"
-                    if info['categoria'] == 'funcao':
+                    if info['categoria'] in ['funcao', 'procedimento'] and 'parametros' in info:
                         parametros = ", ".join([f"{p['nome']}:{p['tipo']}" for p in info['parametros']])
                         linha += f" | Parâmetros: [{parametros}]"
                     arquivo.write(linha + "\n")
+
+    def gerar_relatorio_json(self, nome_arquivo="tabela_simbolos.json"):
+        estrutura = {
+            "escopos": []
+        }
+        
+        escopos_nao_vazios = [escopo for escopo in self.todos_escopos if escopo]
+        
+        for idx, escopo in enumerate(escopos_nao_vazios):
+            escopo_dict = {
+                "id": idx,
+                "simbolos": {}
+            }
+            
+            for nome, info in escopo.items():
+                simbolo = {
+                    "tipo": info["tipo"],
+                    "categoria": info["categoria"]
+                }
+                
+                if info["categoria"] in ["funcao", "procedimento"] and "parametros" in info:
+                    simbolo["parametros"] = info["parametros"]
+                
+                escopo_dict["simbolos"][nome] = simbolo
+            
+            estrutura["escopos"].append(escopo_dict)
+        
+        with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+            json.dump(estrutura, arquivo, indent=2, ensure_ascii=False)
