@@ -1,7 +1,10 @@
 programa ProcedimentoValido;
 {
-    procedimento log(mensagem: inteiro) {
-        print(mensagem);
+    var numero: inteiro;
+    numero = 0;
+
+    procedimento log(numero: inteiro) {
+        print(numero);
     }
 }
 .

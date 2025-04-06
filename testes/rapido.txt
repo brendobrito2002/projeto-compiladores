@@ -1,8 +1,14 @@
 programa Teste;
 {
-    funcao teste() {
-        var x: inteiro;
-        x = 10;
+    var a: inteiro;
+    var b: inteiro;
+    
+    funcao soma(a: inteiro, b: inteiro) : inteiro {
+        retorno a + b;
     }
+    
+    var x: inteiro;
+    x = soma(5, 10);
+    print(x);
 }
 .

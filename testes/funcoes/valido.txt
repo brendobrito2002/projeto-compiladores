@@ -1,7 +1,11 @@
 programa FuncaoComRetorno;
 {
+    var a: inteiro;
+    var b: inteiro;
     funcao soma(a: inteiro, b: inteiro): inteiro {
-        retorno a + b;
+        var resultado: inteiro;
+        resultado = a + b;
+        retorno resultado;
     } 
 }
 .

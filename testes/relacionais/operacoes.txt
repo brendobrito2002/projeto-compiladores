@@ -1,0 +1,35 @@
+programa TodosRelacionais;
+{
+    var diferente: inteiro;
+    diferente = 5;
+    se (diferente != 5){
+        print(true);
+    }
+
+    var igualdade: inteiro;
+    igualdade = 5;
+    se(igualdade == 5){
+        print(true);
+    }
+
+    var maior: inteiro;
+    maior = 5;
+    se(maior > 5){
+        print(true);
+    } 
+    
+    se(maior >= 6) {
+        print(false);
+    }
+
+    var menor: inteiro;
+    menor = 5;
+    se(menor < 5){
+        print(true);
+    } 
+    
+    se(menor <= 6) {
+        print(false);
+    }
+}
+.

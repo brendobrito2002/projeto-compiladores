@@ -1,8 +1,11 @@
 programa FuncaoSemRetorno;
 {
+    var a: inteiro;
+    var b: inteiro;
     funcao soma(a: inteiro, b: inteiro): inteiro {
         var c: inteiro;
         c = a + b;
+        print(c);
     }
 }
 .

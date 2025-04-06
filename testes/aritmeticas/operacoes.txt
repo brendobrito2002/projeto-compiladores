@@ -1,0 +1,18 @@
+programa TodasOperacoes;
+{
+    var adicao: inteiro;
+    adicao = 1 + 2;
+
+    var subtracao: inteiro;
+    subtracao = 10 - 5;
+
+    var multiplicacao: inteiro;
+    multiplicacao = 20 * 100;
+
+    var divisao: inteiro;
+    divisao = 1000 / 100;
+
+    var expressao: inteiro;
+    expressao = 2 + 3 * 5 - 2 + 6 / 2;
+}
+.

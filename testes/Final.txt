@@ -3,14 +3,22 @@ programa Final;
     var x: inteiro;
     var y: booleano;
     var z: inteiro;
+    var a: inteiro;
+    var b: inteiro;
+    var temp: inteiro;
+    a = 10;
 
     funcao calcula(a: inteiro, b: inteiro): inteiro {
         se (a > b) {
-            retorno a + b;
+            temp = a + b;
+            retorno temp;
         } senao {
-            retorno a * b;
+            temp = a * b;
+            retorno temp;
         }
     }
+
+    var valor: inteiro;
 
     funcao analisaValor(valor: inteiro): booleano {
         se (valor > 5) {
@@ -19,6 +27,9 @@ programa Final;
             retorno false;
         }
     }
+
+    var n: inteiro;
+    var limite: inteiro;
 
     funcao calculaFatorialComLimite(n: inteiro, limite: inteiro): inteiro {
         var resultado: inteiro;

@@ -1,0 +1,9 @@
+programa DeclaracaoBooleanInteiro;
+{
+    var x : booleano;
+    x = true;
+
+    var y : inteiro;
+    y = 10;
+}
+.

@@ -1,5 +1,9 @@
 programa Retorno;
 {
+    var x : inteiro;
+    x = 42;
+    print(x);
+
     funcao dobro(x: inteiro): inteiro {
         var resultado: inteiro;
         resultado = x * 2;

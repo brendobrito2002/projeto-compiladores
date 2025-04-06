@@ -1,7 +1,0 @@
-programa Divisao;
-{
-    var resultado: inteiro;
-    resultado = 8 / 2;
-    print(resultado);
-}
-.
