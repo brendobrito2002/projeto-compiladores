@@ -1,4 +1,5 @@
 from analisadores.analisador_lexico import AnalisadorLexico
+from analisadores.analisador_semantico import AnalisadorSemantico
 from analisadores.analisador_sintatico import AnalisadorSintatico
 
 def main():
@@ -15,9 +16,16 @@ def main():
     sintatico.programa()
 
     sintatico.tabela_simbolos.gerar_relatorio("analisadores/arquivos_gerados/tabela_simbolos.txt")
-    sintatico.tabela_simbolos.gerar_relatorio_json("analisadores/arquivos_gerados/tabela_simbolos.json")
-
     print("Tabela de Simbolos gerada em 'analisadores/arquivos_gerados/'!")
+
+    print("\nExecutando Analisador Semântico...")
+    sintatico.semantico.analisar()
+    if sintatico.semantico.erros:
+        print("\n=== Erros Semânticos ===")
+        for erro in sintatico.semantico.erros:
+            print(erro)
+    else:
+        print("Análise Semântica concluída com sucesso!")
 
 if __name__ == "__main__":
     main()
