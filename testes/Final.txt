@@ -30,9 +30,9 @@ programa Final;
 
     var n: inteiro;
     var limite: inteiro;
+    var resultado: inteiro;
 
     funcao calculaFatorialComLimite(n: inteiro, limite: inteiro): inteiro {
-        var resultado: inteiro;
         resultado = 1;
 
         enquanto (n > 1) {
@@ -79,7 +79,7 @@ programa Final;
     y = analisaValor(x);
     z = calculaFatorialComLimite(5, 60);
 
-    se (y == true) {
+    se (y) {
         print(x);
         print(z);
     } senao {

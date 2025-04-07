@@ -1,95 +1,43 @@
-import json
-
 class TabelaDeSimbolos:
     def __init__(self):
         self.escopos_ativos = [{}]
-        self.todos_escopos = []
-        self.contador_temp = 0
-        self._registrar_escopo()
+        self.historico_escopos = [self.escopos_ativos[0]]
+        self.nomes_escopos = ["Global"]
 
-    def _registrar_escopo(self):
-        """Registra o escopo atual por referência"""
-        self.todos_escopos.append(self.escopos_ativos[-1])
-
-    def entrar_escopo(self):
-        """Cria um novo escopo isolado"""
+    def entrar_escopo(self, nome=None):
         novo_escopo = {}
         self.escopos_ativos.append(novo_escopo)
-        self._registrar_escopo()
+        self.historico_escopos.append(novo_escopo)
+        self.nomes_escopos.append(nome if nome else f"Escopo {len(self.nomes_escopos)}")
 
     def sair_escopo(self):
-        """Remove o escopo atual da pilha"""
         if len(self.escopos_ativos) > 1:
             self.escopos_ativos.pop()
 
     def adicionar(self, nome, tipo, categoria, **atributos):
         escopo_atual = self.escopos_ativos[-1]
-        if nome in escopo_atual:
-            raise ValueError(f"Identificador '{nome}' já declarado")
         escopo_atual[nome] = {
             'tipo': tipo,
             'categoria': categoria,
+            'linha': atributos.get('linha', 0),
             **atributos
         }
 
     def buscar(self, nome):
-        """Busca um símbolo na hierarquia de escopos"""
-        for escopo in reversed(self.escopos_ativos):
+        for escopo in reversed(self.historico_escopos):
             if nome in escopo:
                 return escopo[nome]
         return None
 
-    def gerar_temp(self):
-        """Gera um nome temporário único"""
-        self.contador_temp += 1
-        return f"__temp{self.contador_temp}"
-
-    def verificar_tipos(self, tipo1, tipo2, operacao):
-        """Verifica compatibilidade de tipos para operações"""
-        if tipo1 != tipo2:
-            raise TypeError(f"Tipos incompatíveis: {tipo1} e {tipo2} na operação {operacao}")
-
     def gerar_relatorio(self, nome_arquivo="tabela_simbolos.txt"):
         with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
-            arquivo.write("TABELA DE SÍMBOLOS COMPLETA\n")
+            arquivo.write("TABELA DE SÍMBOLOS (Todos os Escopos)\n")
             arquivo.write("=" * 50 + "\n")
-            
-            escopos_nao_vazios = [escopo for escopo in self.todos_escopos if escopo]
-            
-            for idx, escopo in enumerate(escopos_nao_vazios):
-                arquivo.write(f"\n=== Escopo {idx} ===\n")            
-                for nome, info in escopo.items():
-                    linha = f"Nome: {nome.ljust(15)} | Tipo: {info['tipo'].ljust(10)} | Categoria: {info['categoria'].ljust(10)}"
-                    if info['categoria'] in ['funcao', 'procedimento'] and 'parametros' in info:
-                        parametros = ", ".join([f"{p['nome']}:{p['tipo']}" for p in info['parametros']])
-                        linha += f" | Parâmetros: [{parametros}]"
-                    arquivo.write(linha + "\n")
-
-    def gerar_relatorio_json(self, nome_arquivo="tabela_simbolos.json"):
-        estrutura = {
-            "escopos": []
-        }
-        
-        escopos_nao_vazios = [escopo for escopo in self.todos_escopos if escopo]
-        
-        for idx, escopo in enumerate(escopos_nao_vazios):
-            escopo_dict = {
-                "id": idx,
-                "simbolos": {}
-            }
-            
-            for nome, info in escopo.items():
-                simbolo = {
-                    "tipo": info["tipo"],
-                    "categoria": info["categoria"]
-                }
-                
-                if info["categoria"] in ["funcao", "procedimento"] and "parametros" in info:
-                    simbolo["parametros"] = info["parametros"]
-                
-                escopo_dict["simbolos"][nome] = simbolo
-            
-            estrutura["escopos"].append(escopo_dict)
-        
-        with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
-            json.dump(estrutura, arquivo, indent=2, ensure_ascii=False)
+            for escopo, nome in zip(self.historico_escopos, self.nomes_escopos):
+                arquivo.write(f"\n=== {nome} ===\n")
+                if not escopo:
+                    arquivo.write("(Escopo vazio)\n")
+                    continue
+                for nome_simbolo, info in escopo.items():
+                    linha_info = f"Nome: {nome_simbolo.ljust(15)} | Tipo: {info['tipo'].ljust(10)} | Categoria: {info['categoria'].ljust(10)} | Linha: {info['linha']}\n"
+                    arquivo.write(linha_info)
