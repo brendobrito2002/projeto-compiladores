@@ -10,7 +10,6 @@ class AnalisadorLexico:
         self.linha_atual = 1
 
     def analisar(self):
-        """Analisa o código-fonte e gera uma lista de tokens."""
         i = 0
         while i < len(self.codigo):
             token_encontrado = False
@@ -30,15 +29,12 @@ class AnalisadorLexico:
 
             if not token_encontrado:
                 raise ValueError(f"Erro léxico: Caractere inválido '{self.codigo[i]}' na linha {self.linha_atual}")
-        print("Análise Léxica concluída com sucesso!")
         return self.tokens
 
     def salvar_tokens_em_arquivo(self, nome_arquivo="tokens.txt"):
-        """Salva a lista de tokens em um arquivo de texto."""
         caminho_diretorio = "./analisadores/arquivos_gerados"
         os.makedirs(caminho_diretorio, exist_ok=True)
         caminho_arquivo = os.path.join(caminho_diretorio, nome_arquivo)
         with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
             for token in self.tokens:
                 arquivo.write(f"{token}\n")
-        print(f"Lista de Tokens salvos em {caminho_arquivo}")

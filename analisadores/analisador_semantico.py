@@ -65,11 +65,30 @@ class AnalisadorSemantico:
             'linha': linha
         })
 
+    def registrar_chamada_procedimento(self, nome, tipos_argumentos, linha):
+        self.chamadas_funcoes.append({
+            'nome': nome, 
+            'argumentos': tipos_argumentos, 
+            'linha': linha, 
+            'categoria': 'procedimento'
+        })
+
     def registrar_retorno(self, nome_funcao, tipo_expressao, linha):
         if not nome_funcao:
             self.adicionar_erro("Comando 'retorno' fora de uma função ou procedimento", linha)
             return
-            
+        func_info = self.tabela.buscar(nome_funcao)
+        if func_info is None:
+            self.adicionar_erro(f"Função ou procedimento '{nome_funcao}' não encontrado", linha)
+            return
+        if func_info['categoria'] == 'procedimento':
+            if tipo_expressao is not None:
+                self.adicionar_erro(f"Procedimento '{nome_funcao}' não pode retornar um valor", linha)
+        elif func_info['categoria'] == 'funcao':
+            if tipo_expressao is None:
+                self.adicionar_erro(f"Função '{nome_funcao}' deve retornar um valor", linha)
+            elif tipo_expressao != func_info['tipo']:
+                self.adicionar_erro(f"Tipo de retorno incompatível na função '{nome_funcao}': esperado '{func_info['tipo']}', mas encontrado '{tipo_expressao}'", linha)
         if nome_funcao not in self.retornos:
             self.retornos[nome_funcao] = []
         self.retornos[nome_funcao].append({'tipo': tipo_expressao, 'linha': linha})
@@ -95,9 +114,7 @@ class AnalisadorSemantico:
             for nome, info in escopo.items():
                 if info['categoria'] == 'variavel':
                     declaradas.append((nome, info['linha']))
-        
         usadas = set(uso['nome'] for uso in self.usos_variaveis)
-        
         for nome, linha in declaradas:
             if nome not in usadas:
                 self.adicionar_erro(f"Variável '{nome}' declarada mas não utilizada", linha)
@@ -114,22 +131,19 @@ class AnalisadorSemantico:
             nome = chamada['nome']
             tipos_argumentos = chamada['argumentos']
             linha = chamada['linha']
+            categoria = chamada.get('categoria', 'funcao')
             func_info = self.tabela.buscar(nome)
-            
-            if not func_info or func_info['categoria'] not in ['funcao', 'procedimento']:
-                self.adicionar_erro(f"Função ou procedimento '{nome}' não declarado", linha)
-                continue
-                
+            if not func_info or func_info['categoria'] != categoria:
+                self.adicionar_erro(f"{categoria.capitalize()} '{nome}' não declarado", linha)
+                continue     
             tipos_params = [p['tipo'] for p in func_info.get('parametros', [])]
-            
             if len(tipos_argumentos) != len(tipos_params):
                 self.adicionar_erro(f"Chamada de '{nome}' com número incorreto de argumentos: esperado {len(tipos_params)}, recebido {len(tipos_argumentos)}", linha)
-                continue
-                
+                continue 
             for i, (tipo_arg, tipo_param) in enumerate(zip(tipos_argumentos, tipos_params)):
                 if tipo_arg != tipo_param:
                     self.adicionar_erro(f"Argumento {i+1} na chamada de '{nome}' tem tipo incompatível: esperado '{tipo_param}', recebido '{tipo_arg}'", linha)
-
+    
     def _verificar_retornos(self):
         for escopo in self.tabela.historico_escopos:
             for nome, info in escopo.items():
@@ -149,7 +163,7 @@ class AnalisadorSemantico:
                     for retorno in self.retornos.get(nome, []):
                         if retorno['tipo'] is not None:
                             self.adicionar_erro(f"Procedimento '{nome}' não pode retornar um valor (encontrado tipo '{retorno['tipo']}')", retorno['linha'])
-
+                            
     def _verificar_atribuicoes(self):
         for atrib in self.atribuicoes:
             var_info = self.tabela.buscar(atrib['variavel'])
