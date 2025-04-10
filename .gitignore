@@ -1,6 +1,6 @@
-tokens/__pycache__
-analisadores/__pycache__
+tokens/__pycache__/
+analisadores/__pycache__/
 analisadores/arquivos_gerados/
-analisadores/tabela/__pycache__
-analisadores/gerador/__pycache__
+analisadores/tabela/__pycache__/
+analisadores/gerador/__pycache__/
 gramatica/
