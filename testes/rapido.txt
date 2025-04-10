@@ -1,31 +1,11 @@
-programa TesteErros;
+programa TesteFuncao;
 {
-    var x: inteiro;
-    
-    funcao soma(a: inteiro, a: inteiro): inteiro {
-        var a: inteiro;
-        print(z);
-        
-        se (x + 5) {
-            break;
-        }
-        
+    funcao soma(a: inteiro, b: inteiro): inteiro {
+        retorno a + b;
     }
-    
-    procedimento log() {
-        retorno 42;
-    }
-    
-    funcao main(): booleano {
-        var resultado: inteiro;
-        resultado = soma(1);
-        
-        x = true;
-        
-        se (x > true) {
-            print(x);
-        }
-        retorno true;
-    }
+
+    var resultado: inteiro;
+    resultado = soma(3, 4);
+    print(resultado);
 }
 .

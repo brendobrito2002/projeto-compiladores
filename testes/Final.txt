@@ -1,4 +1,4 @@
-programa Final;
+programa FinalAprimorado;
 {
     var x: inteiro;
     var y: booleano;
@@ -6,7 +6,13 @@ programa Final;
     var a: inteiro;
     var b: inteiro;
     var temp: inteiro;
+    var limite: inteiro;
+    var resultado: inteiro;
+    var contador: inteiro;
+
     a = 10;
+    b = 3;
+    limite = 100;
 
     funcao calcula(a: inteiro, b: inteiro): inteiro {
         se (a > b) {
@@ -18,8 +24,6 @@ programa Final;
         }
     }
 
-    var valor: inteiro;
-
     funcao analisaValor(valor: inteiro): booleano {
         se (valor > 5) {
             retorno true;
@@ -28,9 +32,17 @@ programa Final;
         }
     }
 
-    var n: inteiro;
-    var limite: inteiro;
-    var resultado: inteiro;
+    funcao ehPar(numero: inteiro): booleano {
+        se (numero == 0) {
+            retorno true;
+        } senao {
+            se (numero == 1) {
+                retorno false;
+            } senao {
+                retorno ehPar(numero - 2);
+            }
+        }
+    }
 
     funcao calculaFatorialComLimite(n: inteiro, limite: inteiro): inteiro {
         resultado = 1;
@@ -40,12 +52,20 @@ programa Final;
                 print(resultado);
                 break;
             }
-
             resultado = resultado * n;
             n = n - 1;
         }
-
         retorno resultado;
+    }
+
+    procedimento imprimeSePar(numero: inteiro) {
+        var eh_par: booleano;
+        eh_par = ehPar(numero);
+        se (eh_par) {
+            print(numero);
+        } senao {
+            print(0);
+        }
     }
 
     funcao processaValores(a: inteiro, b: inteiro): inteiro {
@@ -57,7 +77,7 @@ programa Final;
             resultado = calcula(b, a);
         }
 
-        enquanto (resultado < 50) {
+        enquanto (resultado < limite) {
             resultado = resultado + 5;
 
             se (resultado == 30) {
@@ -65,14 +85,28 @@ programa Final;
                 continue;
             }
 
-            se (resultado > 40) {
+            se (resultado > 70) {
+                print(resultado);
                 break;
             }
 
             print(resultado);
         }
-
         retorno resultado;
+    }
+
+    procedimento testaContador(maximo: inteiro) {
+        contador = 0;
+        enquanto (contador < maximo) {
+            contador = contador + 1;
+            se (contador == 3) {
+                continue;
+            }
+            se (contador == 7) {
+                break;
+            }
+            print(contador);
+        }
     }
 
     x = calcula(8, 3);
@@ -82,19 +116,38 @@ programa Final;
     se (y) {
         print(x);
         print(z);
+        imprimeSePar(x);
     } senao {
         print(0);
+        imprimeSePar(z);
     }
 
     z = processaValores(x, z);
 
-    enquanto (z < 100) {
-        z = z + 7;
-        print(z);
+    var soma: inteiro;
+    soma = calcula(x, z);
+    print(soma);
 
-        se (z > 90) {
+    testaContador(10);
+
+    enquanto (z < 150) {
+        z = z + 7;
+        se (z > 120) {
+            print(z);
             break;
         }
+        se (z == 105) {
+            continue;
+        }
+        print(z);
+    }
+
+    var paridade: booleano;
+    paridade = ehPar(z);
+    se (paridade) {
+        print(z);
+    } senao {
+        print(z + 1);
     }
 }
 .
